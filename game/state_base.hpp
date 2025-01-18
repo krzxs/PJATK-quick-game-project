@@ -13,7 +13,7 @@ class StateBase {
 public:
     virtual ~StateBase() = default;
 
-    virtual auto update() -> void = 0;
+    virtual auto update(sf::RenderWindow &window) -> void = 0;
 
     virtual auto render(sf::RenderWindow &window) -> void = 0;
 

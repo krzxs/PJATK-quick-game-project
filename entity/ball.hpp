@@ -1,6 +1,5 @@
 #ifndef BALL_HPP
 #define BALL_HPP
-#include "collidable.hpp"
 #include "entity_living.hpp"
 
 

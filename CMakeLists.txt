@@ -66,5 +66,9 @@ add_executable(PJC main.cpp
         game/main_menu_state.hpp
         game/gameplay_state.cpp
         game/gameplay_state.hpp
+        gfx/button.cpp
+        gfx/button.hpp
+        game/game_utils.cpp
+        game/game_utils.hpp
 )
 target_link_libraries(PJC fmt sfml-graphics)

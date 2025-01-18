@@ -4,7 +4,7 @@ auto EnemyBall::initAnimations() -> void {
     animationController.addAnimation("RUN_UP", 10, 0, 0, 4, 1, 64, 64);
     animationController.addAnimation("RUN_DOWN", 10, 0, 1, 4, 2, 64, 64);
     animationController.addAnimation("RUN_LEFT", 10, 0, 2, 4, 3, 64, 64);
-    animationController.addAnimation("RUN_RIGHT a", 10, 0, 3, 4, 4, 64, 64);
+    animationController.addAnimation("RUN_RIGHT", 10, 0, 3, 4, 4, 64, 64);
 }
 
 EnemyBall::EnemyBall(const float x, const float y, sf::Texture &texture, const Direction direction): EntityLiving(

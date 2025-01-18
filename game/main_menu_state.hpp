@@ -1,13 +1,16 @@
 #ifndef MAIN_MENU_STATE_HPP
 #define MAIN_MENU_STATE_HPP
 #include "state_base.hpp"
+#include "../gfx/button.hpp"
 
 
 class MainMenuState final : public StateBase {
 public:
-    MainMenuState();
+    explicit MainMenuState(sf::Font &font);
 
-    auto update() -> void override;
+    ~MainMenuState() override;
+
+    auto update(sf::RenderWindow &window) -> void override;
 
     auto render(sf::RenderWindow &window) -> void override;
 
@@ -15,6 +18,11 @@ public:
 
 private:
     GameState nextState;
+
+    sf::Font &font;
+
+    Button *playButton;
+    Button *exitButton;
 };
 
 

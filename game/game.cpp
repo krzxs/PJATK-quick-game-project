@@ -2,10 +2,8 @@
 
 #include <random>
 
+#include "gameplay_state.hpp"
 #include "main_menu_state.hpp"
-#include "../entity/ball.hpp"
-#include "../entity/enemy.hpp"
-#include "../entity/enemy_ball.hpp"
 #include "fmt/base.h"
 #include "SFML/Graphics/Texture.hpp"
 
@@ -37,6 +35,9 @@ auto Game::initTextures() -> void {
     if (!textures["ENEMY_SHEET2"].loadFromFile("../res/enemy/enemy_sheet2.png")) {
         fmt::println("Failed to load enemy_sheet2.png");
     }
+    if (!textures["ENEMY_SHEET3"].loadFromFile("../res/enemy/enemy_sheet3.png")) {
+        fmt::println("Failed to load enemy_sheet2.png");
+    }
     if (!textures["ENEMY_BALL_SHEET"].loadFromFile(("../res/ball/enemy_ball_sheet.png"))) {
         fmt::println("Failed to load enemy_ball_sheet.png");
     }
@@ -49,167 +50,49 @@ auto Game::initFont() -> void {
 }
 
 Game::Game() : currentState(MAIN_MENU), state(nullptr),
-               window(sf::RenderWindow(sf::VideoMode(1600, 900), "PJC", sf::Style::Titlebar | sf::Style::Close)),
-               timeSinceLastUpdate(0.f), dt(0.f), fps(0.f), frameCount(0) {
+               window(sf::RenderWindow(sf::VideoMode(1600, 900), "PJC", sf::Style::Titlebar | sf::Style::Close)) {
     initTextures();
     initFont();
-
-    tilemap = new Tilemap(50.f, textures["EARTH_SHEET"]);
-    tilemap->loadFromFile("../res/map/map.txt");
-
-    player = new Player(0, 0, textures["PLAYER_SHEET"]);
-    player->setPosition(800 - player->getCenter().x, 450 - player->getCenter().y);
-
-    hpCounter = new HpCounter(textures["HP_COUNTER"], font);
-    coinCounter = new CoinCounter(textures["COIN_COUNTER"], font);
 }
 
 Game::~Game() {
-    delete tilemap;
-
-    delete player;
-
-    delete hpCounter;
-    delete coinCounter;
-
-    if (!entities.empty()) {
-        for (const auto *e: entities) {
-            delete e;
-        }
-    }
-    if (!enemies.empty()) {
-        for (const auto *e: enemies) {
-            delete e;
-        }
-    }
+    delete mainMenuState;
+    delete gameplayState;
 }
 
-void Game::run() {
+auto Game::run() -> void {
+    mainMenuState = new MainMenuState(font);
+    gameplayState = new GameplayState(textures, font);
+
     while (window.isOpen()) {
+        switch (currentState) {
+            case MAIN_MENU:
+                state = mainMenuState;
+                break;
+            case GAMEPLAY:
+                state = gameplayState;
+                break;
+            default:
+                window.close();
+                break;
+        }
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
         }
-        updateDt();
-        state->update();
-        state->render(window);
+        update();
+        render();
+        currentState = state->getNextState();
     }
 }
 
-void Game::updateDt() {
-    dt = timer.restart().asSeconds();
-    timeSinceLastUpdate += dt;
+auto Game::update() -> void {
+    state->update(window);
 }
 
-auto Game::updatePlayerInput(const float &tickDuration) -> void {
-    int x = 0, y = 0;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-        y -= 1;
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-        y += 1;
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-        x -= 1;
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-        x += 1;
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-        if (!player->isOnCooldown()) {
-            const auto pos = player->getCenter();
-            const auto dir = player->getDirection() != Direction(0, 0)
-                                 ? player->getDirection()
-                                 : player->getLastDirection();
-            entities.push_back(new Ball(pos.x, pos.y, textures["BALL_SHEET"], dir));
-            player->setOnCooldown(true);
-            player->restartCooldown();
-        }
-    }
-    if (const auto direction = Direction(x, y); player->getDirection() != direction) {
-        player->setLastDirection(player->getDirection());
-        player->setDirection(direction);
-    }
-    player->move(tickDuration);
-}
-
-void Game::update() {
-    ++frameCount;
-    if (fpsTimer.getElapsedTime().asSeconds() >= 1.f) {
-        fps = frameCount / fpsTimer.restart().asSeconds();
-        fmt::println("FPS: {}", fps);
-        frameCount = 0;
-    }
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<float> dist(1.000, 3.000);
-
-    while (timeSinceLastUpdate >= tickDuration) {
-        if (player->isOnCooldown() && player->getCooldownClock().getElapsedTime().asSeconds() >= 1.f) {
-            player->setOnCooldown(false);
-        }
-        updatePlayerInput(timeSinceLastUpdate);
-        player->update(timeSinceLastUpdate);
-        for (auto *e: entities) {
-            if (e->isAlive()) {
-                e->update(timeSinceLastUpdate);
-                if (player->checkCollision(*e)) {
-                    player->onCollision(*e);
-                }
-            } else {
-                entities.erase(std::ranges::find(entities, e));
-                delete e;
-            }
-        }
-        for (auto *e: enemies) {
-            if (e->isAlive()) {
-                auto random = dist(gen);
-                if (e->isOnCooldown() && e->getCooldownClock().getElapsedTime().asSeconds() >= random) {
-                    e->setOnCooldown(false);
-                }
-                e->update(timeSinceLastUpdate);
-                if (!e->isOnCooldown()) {
-                    const auto pos = e->getCenter();
-                    const auto dir = e->getDirection() != Direction(0, 0)
-                                         ? e->getDirection()
-                                         : e->getLastDirection();
-                    entities.push_back(new EnemyBall(pos.x, pos.y, textures["ENEMY_BALL_SHEET"], dir));
-                    e->setOnCooldown(true);
-                    e->restartCooldown();
-                }
-                for (auto *f: entities) {
-                    if (e->checkCollision(*f)) {
-                        e->onCollision(*f);
-                    }
-                }
-            } else {
-                enemies.erase(std::ranges::find(enemies, e));
-                entities.push_back(new Coin(e->getCenter().x, e->getCenter().y, textures["COIN_SHEET"]));
-                delete e;
-            }
-        }
-        hpCounter->update(player->getHealth());
-        coinCounter->update(player->getCoins());
-        timeSinceLastUpdate -= tickDuration;
-    }
-}
-
-void Game::render() {
+auto Game::render() -> void {
     window.clear();
-    tilemap->render(window);
-    if (!entities.empty()) {
-        for (const auto *e: entities) {
-            e->render(window, true);
-        }
-    }
-    if (!enemies.empty()) {
-        for (const auto *e: enemies) {
-            e->render(window, true);
-        }
-    }
-    player->render(window, true);
-    hpCounter->render(window);
-    coinCounter->render(window);
+    state->render(window);
     window.display();
 }

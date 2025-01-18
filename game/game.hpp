@@ -1,6 +1,7 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 #include <map>
+#include <memory>
 
 #include "gameplay_state.hpp"
 #include "main_menu_state.hpp"
@@ -13,8 +14,6 @@ class Game {
 public:
     Game();
 
-    ~Game();
-
     auto run() -> void;
 
     auto update() -> void;
@@ -25,8 +24,8 @@ private:
     GameState currentState;
     StateBase *state;
 
-    MainMenuState *mainMenuState;
-    GameplayState *gameplayState;
+    std::unique_ptr<MainMenuState> mainMenuState;
+    std::unique_ptr<GameplayState> gameplayState;
 
     sf::RenderWindow window;
     sf::Event event;

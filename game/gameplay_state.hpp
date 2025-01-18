@@ -1,5 +1,7 @@
 #ifndef GAMEPLAY_STATE_HPP
 #define GAMEPLAY_STATE_HPP
+#include <memory>
+
 #include "state_base.hpp"
 #include "../entity/player.hpp"
 #include "../entity/coin.hpp"
@@ -43,10 +45,10 @@ private:
     float fps;
     int frameCount;
 
-    Tilemap *tilemap;
-    Player *player;
-    HpCounter *hpCounter;
-    CoinCounter *coinCounter;
+    std::unique_ptr<Tilemap> tilemap;
+    std::unique_ptr<Player> player;
+    std::unique_ptr<HpCounter> hpCounter;
+    std::unique_ptr<CoinCounter> coinCounter;
     std::vector<Enemy *> enemies;
     std::vector<Entity *> entities;
 

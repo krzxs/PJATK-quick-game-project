@@ -11,24 +11,17 @@
 GameplayState::GameplayState(std::map<std::string, sf::Texture> &textures, sf::Font &font): nextState(GAMEPLAY),
     textures(textures), font(font), timeSinceLastUpdate(0.f), dt(0.f), fps(0.f), frameCount(0),
     timeSinceLastRespawn(3) {
-    tilemap = new Tilemap(50.f, textures["EARTH_SHEET"]);
+    tilemap = std::make_unique<Tilemap>(50.f, textures["EARTH_SHEET"]);
     tilemap->loadFromFile("../res/map/map.txt");
 
-    player = new Player(0, 0, textures["PLAYER_SHEET"]);
+    player = std::make_unique<Player>(0, 0, textures["PLAYER_SHEET"]);
     player->setPosition(800 - player->getCenter().x, 450 - player->getCenter().y);
 
-    hpCounter = new HpCounter(textures["HP_COUNTER"], font);
-    coinCounter = new CoinCounter(textures["COIN_COUNTER"], font);
+    hpCounter = std::make_unique<HpCounter>(textures["HP_COUNTER"], font);
+    coinCounter = std::make_unique<CoinCounter>(textures["COIN_COUNTER"], font);
 }
 
 GameplayState::~GameplayState() {
-    delete tilemap;
-
-    delete player;
-
-    delete hpCounter;
-    delete coinCounter;
-
     if (!entities.empty()) {
         for (const auto *e: entities) {
             delete e;

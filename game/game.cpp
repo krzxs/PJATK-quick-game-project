@@ -49,28 +49,23 @@ auto Game::initFont() -> void {
     }
 }
 
-Game::Game() : currentState(MAIN_MENU), state(nullptr),
+Game::Game() : currentState(MAIN_MENU), state(nullptr), mainMenuState(nullptr), gameplayState(nullptr),
                window(sf::RenderWindow(sf::VideoMode(1600, 900), "PJC", sf::Style::Titlebar | sf::Style::Close)) {
     initTextures();
     initFont();
 }
 
-Game::~Game() {
-    delete mainMenuState;
-    delete gameplayState;
-}
-
 auto Game::run() -> void {
-    mainMenuState = new MainMenuState(font);
-    gameplayState = new GameplayState(textures, font);
+    mainMenuState = std::make_unique<MainMenuState>(font);
+    gameplayState = std::make_unique<GameplayState>(textures, font);
 
     while (window.isOpen()) {
         switch (currentState) {
             case MAIN_MENU:
-                state = mainMenuState;
+                state = mainMenuState.get();
                 break;
             case GAMEPLAY:
-                state = gameplayState;
+                state = gameplayState.get();
                 break;
             default:
                 window.close();

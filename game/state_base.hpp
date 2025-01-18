@@ -5,7 +5,7 @@
 enum GameState {
     MAIN_MENU,
     GAMEPLAY,
-    PAUSE_MENU,
+    GAME_OVER,
     EXIT
 };
 

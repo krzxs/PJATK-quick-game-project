@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD 20)
 
 set(BUILD_SHARED_LIBS FALSE)
 
+set(CMAKE_EXE_LINKER_FLAGS "-static")
+
 include(FetchContent)
 
 FetchContent_Declare(
@@ -70,5 +72,7 @@ add_executable(PJC main.cpp
         gfx/button.hpp
         game/game_utils.cpp
         game/game_utils.hpp
+        game/game_over_state.cpp
+        game/game_over_state.hpp
 )
 target_link_libraries(PJC fmt sfml-graphics)

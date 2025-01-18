@@ -8,8 +8,6 @@ class MainMenuState final : public StateBase {
 public:
     explicit MainMenuState(sf::Font &font);
 
-    ~MainMenuState() override;
-
     auto update(sf::RenderWindow &window) -> void override;
 
     auto render(sf::RenderWindow &window) -> void override;
@@ -21,8 +19,8 @@ private:
 
     sf::Font &font;
 
-    Button *playButton;
-    Button *exitButton;
+    Button playButton;
+    Button exitButton;
 };
 
 

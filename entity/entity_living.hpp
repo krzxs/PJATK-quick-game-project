@@ -7,7 +7,8 @@
 
 class EntityLiving : public Entity {
 public:
-    EntityLiving(sf::Texture &texture, int maxHealth, Direction direction, float acceleration, float deceleration,
+    EntityLiving(sf::Texture &texture, float hitboxWidth, float hitboxHeight, float hitboxOffsetX, float hitboxOffsetY,
+                 int maxHealth, Direction direction, float acceleration, float deceleration,
                  float maxVelocity);
 
     //Movement

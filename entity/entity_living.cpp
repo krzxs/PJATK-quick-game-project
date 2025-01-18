@@ -1,12 +1,16 @@
 #include "entity_living.hpp"
 
-EntityLiving::EntityLiving(sf::Texture &texture, const int maxHealth,
-                           const Direction direction, float acceleration, float deceleration,
-                           float maxVelocity) : Entity(texture),
-                                                direction(direction),
-                                                lastDirection(Direction()),
-                                                maxHealth(maxHealth),
-                                                movementController(sprite, acceleration, deceleration, maxVelocity) {
+EntityLiving::EntityLiving(sf::Texture &texture, const float hitboxWidth, const float hitboxHeight,
+                           const float hitboxOffsetX,
+                           const float hitboxOffsetY, const int maxHealth,
+                           const Direction direction, const float acceleration, const float deceleration,
+                           const float maxVelocity) : Entity(texture, hitboxWidth, hitboxHeight, hitboxOffsetX,
+                                                             hitboxOffsetY),
+                                                      direction(direction),
+                                                      lastDirection(Direction()),
+                                                      maxHealth(maxHealth),
+                                                      movementController(
+                                                          sprite, acceleration, deceleration, maxVelocity) {
     health = maxHealth;
 }
 

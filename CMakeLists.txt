@@ -38,5 +38,33 @@ add_executable(PJC main.cpp
         entity/movement_controller.hpp
         entity/direction.cpp
         entity/direction.hpp
+        entity/hitbox_controller.cpp
+        entity/hitbox_controller.hpp
+        entity/coin.cpp
+        entity/coin.hpp
+        entity/collidable.hpp
+        gfx/tile.cpp
+        gfx/tile.hpp
+        gfx/tilemap.cpp
+        gfx/tilemap.hpp
+        entity/ball.cpp
+        entity/ball.hpp
+        gfx/coin_counter.cpp
+        gfx/coin_counter.hpp
+        gfx/gui_counter.cpp
+        gfx/gui_counter.hpp
+        gfx/hp_counter.cpp
+        gfx/hp_counter.hpp
+        entity/enemy.cpp
+        entity/enemy.hpp
+        entity/follow_component.cpp
+        entity/follow_component.hpp
+        entity/enemy_ball.cpp
+        entity/enemy_ball.hpp
+        game/state_base.hpp
+        game/main_menu_state.cpp
+        game/main_menu_state.hpp
+        game/gameplay_state.cpp
+        game/gameplay_state.hpp
 )
 target_link_libraries(PJC fmt sfml-graphics)

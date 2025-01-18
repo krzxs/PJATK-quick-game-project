@@ -1,7 +1,5 @@
 #include "movement_controller.hpp"
 
-#include "fmt/base.h"
-
 MovementController::MovementController(sf::Sprite &sprite, const float acceleration, const float deceleration,
                                        const float maxVelocity): sprite(sprite),
                                                                  acceleration(acceleration), deceleration(deceleration),
@@ -53,8 +51,11 @@ auto MovementController::getState(const unsigned int state) const -> bool {
 }
 
 auto MovementController::move(const Direction direction, const float &tickDuration) -> void {
-    velocity.x += acceleration * static_cast<float>(direction.getHorizontal()) * tickDuration;
-    velocity.y += acceleration * static_cast<float>(direction.getVertical()) * tickDuration;
+    const auto dirX = static_cast<float>(direction.getHorizontal());
+    const auto dirY = static_cast<float>(direction.getVertical());
+
+    velocity.x += acceleration * dirX * tickDuration;
+    velocity.y += acceleration * dirY * tickDuration;
 }
 
 auto MovementController::updateMovement(const float &tickDuration) -> void {

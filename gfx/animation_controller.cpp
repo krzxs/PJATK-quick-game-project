@@ -8,6 +8,7 @@ AnimationController::~AnimationController() {
 }
 
 auto AnimationController::isDone(const std::string &name) const -> bool {
+    if (!animations.contains(name)) return false;
     return animations.at(name).isDone();
 }
 
@@ -25,11 +26,15 @@ auto AnimationController::play(const std::string &name, const float &tickDuratio
         if (lastAnimation.empty()) {
             lastAnimation = name;
         } else {
-            animations.at(lastAnimation).reset();
-            lastAnimation = name;
+            if (animations.contains(lastAnimation)) {
+                animations.at(lastAnimation).reset();
+                lastAnimation = name;
+            }
         }
     }
-    animations.at(name).play(tickDuration);
-
-    return animations.at(name).isDone();
+    if (animations.contains(name)) {
+        animations.at(name).play(tickDuration);
+        return animations.at(name).isDone();
+    }
+    return false;
 }

@@ -2,10 +2,10 @@
 #define GAME_HPP
 #include <map>
 
-#include "../entity/player.hpp"
+#include "state_base.hpp"
+#include "SFML/Graphics/Font.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "SFML/Window/Event.hpp"
-
 
 class Game {
 public:
@@ -17,7 +17,7 @@ public:
 
     auto updateDt() -> void;
 
-    auto updatePlayerInput(const float &tickDuration) const -> void;
+    auto updatePlayerInput(const float &tickDuration) -> void;
 
     auto update() -> void;
 
@@ -26,6 +26,9 @@ public:
 private:
     float static inline tickRate = 128.f;
     float static inline tickDuration = 1.0f / tickRate;
+
+    GameState currentState;
+    StateBase *state;
 
     sf::RenderWindow window;
     sf::Event event;
@@ -36,10 +39,12 @@ private:
     float fps;
     int frameCount;
     std::map<std::string, sf::Texture> textures;
+    sf::Font font;
 
-    Player *player;
 
     auto initTextures() -> void;
+
+    auto initFont() -> void;
 };
 
 

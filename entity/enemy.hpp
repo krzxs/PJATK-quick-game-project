@@ -1,25 +1,22 @@
-#ifndef PLAYER_HPP
-#define PLAYER_HPP
+#ifndef ENEMY_HPP
+#define ENEMY_HPP
 #include "collidable.hpp"
 #include "entity_living.hpp"
+#include "follow_component.hpp"
 #include "SFML/System/Clock.hpp"
 
 
-class Player final : public EntityLiving, public Collidable {
+class Enemy : public EntityLiving, public Collidable {
 public:
-    Player(float x, float y, sf::Texture &texture);
-
-    auto getCoins() const -> unsigned int;
-
-    auto addCoins(unsigned int coins) -> void;
-
-    auto removeCoins(unsigned int coins) -> bool;
+    Enemy(float x, float y, EntityLiving &toFollow, float maxHealth, sf::Texture &texture);
 
     auto update(const float &tickDuration) -> void override;
 
     auto checkCollision(Entity &second) const -> bool override;
 
     auto onCollision(Entity &second) -> void override;
+
+    auto attack() -> void;
 
     auto die() -> void override;
 
@@ -36,11 +33,12 @@ private:
 
     auto initAnimations() -> void override;
 
-    unsigned int coins;
-
     bool onCooldown;
     sf::Clock cooldownTimer;
+
+protected:
+    FollowComponent followComponent;
 };
 
 
-#endif //PLAYER_HPP
+#endif //ENEMY_HPP
